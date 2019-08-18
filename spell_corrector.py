@@ -25,22 +25,23 @@ def correction(word):
     elif "-" in word:
         words = word.split("-")
         sep = "-"
-    elif len(joined_word(word))==2:
-        words = joined_word(word)
-        sep = ""
     else:
         words = [word]
         sep = ""
 
     top_cands = []
     for word in words:
+        joined_by = joined_word(word)
         cands = list(set(candidates(word)))
         print("Candidates : ", cands)
         probs = [P(c) for c in cands]
         sort_ids = np.argsort(probs)[::-1]
-        top_cands.append([cands[i] for i in sort_ids[:10]])
+        if len(joined_by)==2 and P(joined_by[0])+P(joined_by[1]) > P(cands[sort_ids[0]]):
+            top_cands.append([word])
+        else:
+            top_cands.append([cands[i] for i in sort_ids[:10]])
     if len(words)==2:
-        corrections =  list(map(sep.join, itertools.product(top_cands[0], top_cands[1])))
+        corrections = list(map(sep.join, itertools.product(top_cands[0], top_cands[1])))
     else:
         corrections = top_cands[0]
     return corrections
@@ -53,8 +54,6 @@ def candidates(word):
     e1 = edits1(word)
     e2 = edits2(word)
     return (known([word]) or known(e1) or known(e2) or [word])
-
-
 
 def known(words): 
     "The subset of `words` that appear in the dictionary of WORDS."
@@ -72,9 +71,9 @@ def edits1(word):
 
 def joined_word(word):
     splits = [(word[:i], word[i:]) for i in range(len(word) + 1)]
-    special_single_letters = "iao"
+    special_single_letter_words = "ia"
     for w1, w2 in splits:
-        if known(w1) and known(w2) and (len(w1)>1 or w1 in special_single_letters):
+        if known([w1]) and known([w2]) and (len(w1)>1 or w1 in special_single_letter_words):
             return [w1, w2]
     else:
         return [word]
