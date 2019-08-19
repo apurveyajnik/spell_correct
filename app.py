@@ -1,5 +1,6 @@
 from flask import Flask, request
 from spell_corrector import correction
+import config
 
 app = Flask(__name__)
 
@@ -9,4 +10,8 @@ def spell_correct():
     requests = request.json
     word = requests["word"]
     correct = correction(word)
-    return correct
+    return str(correct)
+
+
+if __name__=="__main__":
+    app.run()
