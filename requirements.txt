@@ -1,0 +1,4 @@
+# For argmax operation
+numpy
+# For runnig production server
+gunicorn

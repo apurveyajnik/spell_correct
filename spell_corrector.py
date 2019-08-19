@@ -49,7 +49,7 @@ def correction(word):
     else:
         corrections = top_cands[0]
 
-    return {word: corrections}
+    return {"correction": corrections}
 
 
 def candidates(word): 
